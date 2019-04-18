@@ -9,6 +9,7 @@ computed from the density functional theory (DFT) code
 <img src="pics/ZrIN.png" width=400 align="middle">
 
 
+Modified the code such that it can read the OUTCAR of normal mode calculation in parallelization rather than the original OUTCAR generated from VASP.
 ### Details:
 The file `modes_to_vesta.py` quickly converts the modes calculated in
 a VASP density functional perturbation theory (DFPT) calculation (IBRION=7 or 8) to
