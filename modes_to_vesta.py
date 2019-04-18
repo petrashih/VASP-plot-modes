@@ -1,7 +1,34 @@
-from pylab import *
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Mar 28 22:20:12 2019
+
+Automatically generates visualizations of vibrational modes computed from the density functional theory (DFT) code VASP
+
+this file is from https://github.com/rehnd/VASP-plot-modes
+Petrashih modified
+    such that it can read the OUTCAR of normal mode calculation in Parallelization rather than the original OUTCAR
+    use math module instead of pylab
+    create a data folder for output files
+
+@author: petrashih
+"""
+
+import math
 import sys
 import re
+import os
 
+## define the name of the directory to be created
+save_path = "./data_output"
+
+try:  
+    os.mkdir(save_path)
+except OSError:  
+    print ("Creation of the directory %s failed" % save_path)
+else:  
+    print ("Successfully created the directory %s " % save_path)
+
+##
 
 def MAT_m_VEC(m, v):
     p = [ 0.0 for i in range(len(v)) ]
@@ -74,9 +101,7 @@ def parseModes(outcar, nat, vesta_front, vesta_end, scaling_factor):
         line = outcar.readline()
         if not line:
             break
-        if "Eigenvectors after division by SQRT(mass)" in line:
-            outcar.readline() # empty line
-            outcar.readline() # Eigenvectors and eigenvalues of the dynamical matrix
+        if "Eigenvectors and eigenvalues of the dynamical matrix" in line:
             outcar.readline() # ----------------------------------------------------
             outcar.readline() # empty line
             print("Mode    Freq (cm-1)")
@@ -92,7 +117,7 @@ def parseModes(outcar, nat, vesta_front, vesta_end, scaling_factor):
                     tmp = outcar.readline().split()
                     eigvec.append([ float(tmp[x]) for x in range(3,6) ])
                 eigvecs[i] = eigvec
-                norms[i] = sqrt( sum( [abs(x)**2 for sublist in eigvec for x in sublist] ) )
+                norms[i] = math.sqrt( sum( [abs(x)**2 for sublist in eigvec for x in sublist] ) )
                 writeVestaMode(i, eigvals[i], eigvecs[i], vesta_front, vesta_end, nat, scaling_factor)
                 print("%4d      %6.2f" %(i+1, eigvals[i]))
 
@@ -103,7 +128,10 @@ def parseModes(outcar, nat, vesta_front, vesta_end, scaling_factor):
 
 
 def writeVestaMode(i, eigval, eigvec, vesta_front, vesta_end, nat, scaling_factor):
-    modef = open("mode_%.2f.vesta"%eigval, 'w')
+    name_of_file = "mode_%.2f.vesta"%eigval
+    completeName = os.path.join(save_path, name_of_file) 
+
+    modef = open(completeName, 'w')
 
     modef.write(vesta_front)
 
@@ -124,6 +152,7 @@ def writeVestaMode(i, eigval, eigvec, vesta_front, vesta_end, nat, scaling_facto
     modef.write(towrite)
 
     return 0
+
 
 
 def openVestaOutcarPoscar():
@@ -170,7 +199,7 @@ def getVestaFrontEnd(vesta):
 
 if __name__ == '__main__':
 
-    scaling_factor = 40
+    scaling_factor = 4
     
     vesta, outcar, poscar = openVestaOutcarPoscar()
     vesta_front, vesta_end = getVestaFrontEnd(vesta)
