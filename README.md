@@ -8,8 +8,14 @@ computed from the density functional theory (DFT) code
 
 <img src="pics/ZrIN.png" width=400 align="middle">
 
+### My version
+Petrashih modified
+- such that it can read the OUTCAR of normal mode calculation in Parallelization rather than the original OUTCAR
+- use math module instead of pylab
+- create a data folder for output files
 
-Modified the code such that it can read the OUTCAR of normal mode calculation in parallelization rather than the original OUTCAR generated from VASP.
+in Apr.18 2019
+
 ### Details:
 The file `modes_to_vesta.py` quickly converts the modes calculated in
 a VASP density functional perturbation theory (DFPT) calculation (IBRION=7 or 8) to
@@ -35,3 +41,4 @@ The result is a set of 3N files where N is the number of atoms in the unit cell.
 
 
 *Some parts of `modes_to_vesta.py` have been adapted from [vasp_raman.py](https://github.com/raman-sc/VASP) and [Phonopy](https://atztogo.github.io/phonopy/)*
+
